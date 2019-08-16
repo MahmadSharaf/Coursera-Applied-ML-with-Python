@@ -11,7 +11,7 @@
 
 # For this assignment, you will be using the Breast Cancer Wisconsin (Diagnostic) Database to create a classifier that can help diagnose patients. First, read through the description of the dataset (below).
 
-# In[3]:
+# In[1]:
 
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ cancer = load_breast_cancer()
 
 # The object returned by `load_breast_cancer()` is a scikit-learn Bunch object, which is similar to a dictionary.
 
-# In[4]:
+# In[2]:
 
 cancer.keys()
 
@@ -35,7 +35,7 @@ cancer.keys()
 # 
 # *This function should return an integer.*
 
-# In[5]:
+# In[3]:
 
 # You should write your whole answer within the function provided. The autograder will call
 # this function and compare the return value against the correct solution value
@@ -76,18 +76,14 @@ answer_zero()
 # 
 #     RangeIndex(start=0, stop=569, step=1)
 
-# In[6]:
-
-df1= pd.DataFrame(np.c_[cancer['data'], cancer['target']],
-                  columns= np.append(cancer['feature_names'], ['target']))
-
-
-# In[7]:
+# In[4]:
 
 def answer_one():
     
-    return pd.DataFrame(np.c_[cancer['data'], cancer['target']],
-                  columns= np.append(cancer['feature_names'], ['target']))
+    columns = np.append(cancer['feature_names'],'target')
+    data = np.column_stack((cancer.data,cancer.target))
+    
+    return pd.DataFrame(data=data, columns=columns)
 
 answer_one()
 
@@ -97,14 +93,14 @@ answer_one()
 # 
 # *This function should return a Series named `target` of length 2 with integer values and index =* `['malignant', 'benign']`
 
-# In[54]:
+# In[5]:
 
 def answer_two():
     
     cancerdf = answer_one()
-    
-    target = np.array([cancerdf.groupby('target').count().ix[0,0],cancerdf.groupby('target').count().ix[1,0]])
-    target = pd.Series(target,index=['malignant', 'benign'])
+    count_0 = len(cancerdf[cancerdf['target']==0])
+    count_1 = len(cancerdf[cancerdf['target']==1])
+    target = pd.Series((count_0,count_1),index=['malignant', 'benign'])
     return target
 
 answer_two()
@@ -117,13 +113,11 @@ answer_two()
 # * `X`*, a pandas DataFrame, has shape* `(569, 30)`
 # * `y`*, a pandas Series, has shape* `(569,)`.
 
-# In[9]:
+# In[6]:
 
 def answer_three():
     cancerdf = answer_one()
-    
-    X,y = cancerdf.ix[:,:-1],cancerdf['target']
-    
+    X,y = cancerdf.iloc[:,:-1],cancerdf['target']
     
     return X,y
 
@@ -139,13 +133,12 @@ def answer_three():
 # * `y_train` *has shape* `(426,)`
 # * `y_test` *has shape* `(143,)`
 
-# In[28]:
+# In[7]:
 
 from sklearn.model_selection import train_test_split
 
 def answer_four():
     X, y = answer_three()
-    
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
     
     return X_train, X_test, y_train, y_test
@@ -156,7 +149,7 @@ def answer_four():
 # 
 # *This function should return a * `sklearn.neighbors.classification.KNeighborsClassifier`.
 
-# In[29]:
+# In[8]:
 
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -174,7 +167,7 @@ def answer_five():
 # 
 # *This function should return a numpy array either `array([ 0.])` or `array([ 1.])`*
 
-# In[30]:
+# In[9]:
 
 def answer_six():
     cancerdf = answer_one()
@@ -182,7 +175,6 @@ def answer_six():
     knn=answer_five()
     
     return knn.predict(means)
-answer_six()
 
 
 # ### Question 7
@@ -190,13 +182,11 @@ answer_six()
 # 
 # *This function should return a numpy array with shape `(143,)` and values either `0.0` or `1.0`.*
 
-# In[34]:
+# In[10]:
 
 def answer_seven():
     X_train, X_test, y_train, y_test = answer_four()
     knn = answer_five()
-    
-    
     
     return knn.predict(X_test)
 
@@ -206,7 +196,7 @@ def answer_seven():
 # 
 # *This function should return a float between 0 and 1*
 
-# In[36]:
+# In[11]:
 
 def answer_eight():
     X_train, X_test, y_train, y_test = answer_four()
@@ -215,14 +205,13 @@ def answer_eight():
     score = knn.score(X_test,y_test)
     
     return score
-answer_eight()
 
 
 # ### Optional plot
 # 
 # Try using the plotting function below to visualize the differet predicition scores between training and test sets, as well as malignant and benign cells.
 
-# In[40]:
+# In[12]:
 
 def accuracy_plot():
     import matplotlib.pyplot as plt
@@ -274,12 +263,7 @@ def accuracy_plot():
 # 
 # **Comment out** the plotting function when submitting your notebook for grading. 
 
-# In[42]:
+# In[13]:
 
 #accuracy_plot() 
-
-
-# In[ ]:
-
-
 

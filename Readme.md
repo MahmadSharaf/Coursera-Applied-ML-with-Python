@@ -205,8 +205,8 @@ This is in contrast to unsupervised machine learning where we don't have labels 
     * The target value can be predicted just using a weighted sum of the input variables, a linear function.
     * It can get stable, but potentially inaccurate predictions.
 
-    1. Linear Regression
-
+    1. Linear Regression  
+        ![equation](https://github.com/MahmadSharaf/Coursera-Applied-ML-with-Python/blob/master/images/Linear%20equation.jpg)  
         $$
         \hat{y} = \hat{w_0}x_0 + \hat{w_1} x_1 + ... \hat{w_n} x_n + \hat{b}
         $$

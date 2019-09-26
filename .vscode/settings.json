@@ -8,10 +8,13 @@
         "numpy",
         "overfitting",
         "pyplot",
+        "resample",
         "scikit",
         "scipy",
         "seaborn",
-        "sklearn"
+        "sklearn",
+        "underfit",
+        "underfitting"
     ],
     "python.pythonPath": "C:\\Users\\DELL\\Anaconda3\\python.exe"
 }

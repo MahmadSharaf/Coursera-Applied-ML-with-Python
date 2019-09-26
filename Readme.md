@@ -147,6 +147,51 @@ examples of a task
     * Notice missing data.
     * Gain insight on what machine learning model might be appropriate, if any.
     * Get a sense of how difficult the program might be.
+    * Feature normalization:
+      * MinMax Scaling: transform all the input variables, so they're all on the same scale between zero and one.
+
+        ```python
+        from sklearn.preprocessing import MinMaxScaler
+        scaler = MinMaxScaler()
+        scaler.fit(x_train)   # compute the min and max feature   values for each feature in this training dataset.
+        X_trained_scaled = scaler.transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
+        clf = Ridge().fit(X_train_scaled, y_train)
+        r2_score = clf.score(X_test_scaled, y_test)
+        # or more efficiently fit and transform in one step
+        X_train_scaled = scaler.fit_transform(X_train)
+        ```
+
+        Critical aspects to feature normalization:
+        1. Apply the same scalar object to both training and testing data.
+        2. Training the scalar object on the training data and not on the test data. If it trained on the test data, it will cause a phenomena called Data Leakage, where the training phase has information that is leaked from the test set.
+    * Polynomial Features
+    ![Polynomial-Features_equation](/images/Polynomial&#32;features&#32;equation.jpg)
+      * Generate new features consisting of all polynomial combinations of the original two features 𝑥0,𝑥1.
+      * The degree of the polynomial specifies how many variables participate at a time in each new feature (above example: degree 2).
+      * This is still a weighted linear combination of features, so it's still a linear model, and can use same least-squares estimation method for w and b.
+      * Adding these extra polynomial features allows us a much richer set of complex functions that we can use to fit to the data.
+      * This intuitively as allowing polynomials to be fit to the training data instead of simply a straight line, but using the same least-squares criterion that minimizes mean squared error.
+      * We want to transform the data this way to capture interactions between the original features by adding them as features to the linear model.
+      * Polynomial feature expansion with high as this can lead to complex models that over-fit.
+      * Polynomial feature expansion is often combined with a regularized learning method like ridge regression.
+
+        ```python
+        from sklearn.linear_model import LinearRegression
+        from sklearn.linear_model import Ridge
+        from sklearn.preprocessing import PolynomialFeatures
+
+        X_train, X_test, y_train, y_test =  train_test_split(X_F1    y_F1, random_state = 0)
+
+        linreg = LinearRegression().fit(X_train, y_train)
+
+        poly = PolynomialFeatures(degree=2)
+        X_F1_poly = poly.fit_transform(X_F1)
+
+        X_train, X_test, y_train, y_test =  train_test_split(X_F1_poly,y_F1, random_state = 0)
+
+        linreg = LinearRegression().fit(X_train, y_train)
+        ```
 
 2. Split dataset into features X and labels y
 
@@ -207,23 +252,75 @@ This is in contrast to unsupervised machine learning where we don't have labels 
 
     1. Linear Regression  
         ![equation](https://github.com/MahmadSharaf/Coursera-Applied-ML-with-Python/blob/master/images/Linear%20equation.jpg)  
-        $$
+        <!-- $$
         \hat{y} = \hat{w_0}x_0 + \hat{w_1} x_1 + ... \hat{w_n} x_n + \hat{b}
-        $$
-        $\hat{y}$: the predicted output.  
-        $\hat{w_i}$: values are model coefficients or weights.  
-        $\hat{b}$: the biased term or intercept of the model.
+        $$ -->
+        y: the predicted output.  
+        w_i: values are model coefficients or weights.  
+        b: the biased term or intercept of the model.
 
-        $\hat{w}, \hat{b}$ parameters are estimated by:
+        w, b parameters are estimated by:
 
         * `Squared loss function` returns the squared difference between the target value and the  actual value as the penalty.
-        * The learning algorithm then computes or searches for the set of $\hat{w}, \hat{b}$ parameters that minimize the total of this loss function over all training points.
-            1. Least Squares:  
-               * The most popular way to estimate $\hat{w}$ and $\hat{b}$ parameters is using what's called least-squares linear regression or ordinary least-squares. Least-squares finds the values of $\hat{w}$ and $\hat{b}$ that minimize the total sum of squared differences between the predicted $\hat{y}$ value and the actual $\hat{y}$ value in the training set. Or equivalently it minimizes the mean squared error of the model.
-            2. Ridge Regression:
-               * Ridge regression uses the same least-squares criterion, but with one difference. During the training phase, it adds a penalty for large feature weights in $\hat{w}$ parameters.
+        * The learning algorithm then computes or searches for the set of w, b parameters that minimize the total of this loss function over all training points.
+            1. Least Squares:
+            ![Least-squares_equation](images/Least-squares&#32;Equation.jpg)
+               * The most popular way to estimate w and b parameters is using what's called least-squares linear regression or ordinary least-squares. Least-squares finds the values of w and b that minimize the total sum of squared differences between the predicted y value and the actual y value in the training set. Or equivalently it minimizes the mean squared error of the model.
+
+                    ```python
+                    from sklearn.linear_model import LinearRegression
+
+                    X_train, X_test, y_train, y_test= train_test_split(X_R1, y_R1, random_state= 0)
+
+                    linreg= LinearRegression().fit(X_train, y_train)
+                    ```
+
+            2. Ridge Regression:  
+               ![ridge_equation](/images/Ridge&#32;Equation.jpg)
+               * Ridge regression uses the same least-squares criterion, but with one difference. During the training phase, it adds a penalty for large feature weights in w parameters.
                * Once the parameters are learned, its prediction formula is the same as ordinary least-squares.
                * The addition of a parameter penalty is called regularization. Regularization prevents over fitting by restricting the model, typically to reduce its complexity.
+               * If ridge regression finds two possible linear models that predict the training data values equally well, it will prefer the linear model that has a smaller overall sum of squared feature weights.
+               * The amount of regularization to apply is controlled by the alpha parameter. Larger alpha means more regularization and simpler linear models with weights closer to zero.
+
+                    ```python
+                    from sklearn.preprocessing import MinMaxScaler
+                    scaler = MinMaxScaler()
+
+                    from sklearn.linear_model import Ridge
+                    X_train, X_test, y_train, y_test = train_test_split(X_crime, y_crime, random_state=0)
+
+                    X_train_scaled = scaler.fit_transform(X_train)
+                    X_test_scaled = scaler.transform(X_test)
+
+                    linridge = Ridge(alpha = 20.0).fit(X_train_scaled, y_train)
+                    ```
+
+            3. Lasso Regression
+                ![Lasso_equation](/images/Lasso&#32;Equation.jpg)
+                * Like ridge regression, lasso regression adds a regularization penalty term to the ordinary least-squares objective, that causes the model W-coefficients to shrink towards zero.
+                * Lasso regression is another form of regularized linear regression that uses an L1 regularization penalty for training (instead of ridge's L2 penalty).
+                * L1 Penalty: minimizes the sum of the absolute values of the coefficients.
+                * This has the effect of setting parameter weights in w to zero for the least influential variables. This called a sparse solution: a kind of feature selection.
+                * The parameter alpha controls the amount of L1 regularization (default = 1.0).
+                * The prediction formula is the same as ordinary least-squares.
+
+                    ```python
+                    from sklearn.preprocessing import MinMaxScaler
+                    scaler = MinMaxScaler()
+
+                    from sklearn.linear_model import Ridge
+                    X_train, X_test, y_train, y_test =  train_test_split(X_crime, y_crime, random_state=0)
+
+                    X_train_scaled = scaler.fit_transform(X_train)
+                    X_test_scaled = scaler.transform(X_test)
+
+                    linlasso = Lasso(alpha = 2.0, max_iter = 10000) .fit(X-train_scaled, y_train)
+                    ```
+
+                * When to use ridge vs lasso:
+                  * Many small/medium sized effects: use ridge.
+                  * Only a few variables with medium/large effect: use lasso.
 
 ## Aspects to be considered
 

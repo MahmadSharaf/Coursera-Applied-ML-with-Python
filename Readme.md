@@ -195,16 +195,38 @@ examples of a task
 
 2. Split dataset into features X and labels y
 
-3. Split X and y with a percentage for training the algorithm and the remaining for testing its accuracy
+3. Split X and y
 
-    This can be achieved in python as below:
+    1. With a percentage for training the algorithm and the remaining for testing its accuracy
 
-    ```python
-    from sklearn.model_selection import train_test_split
+        ```python
+        from sklearn.model_selection import train_test_split
 
-    X_train, X_test, y_train, y_test =
-    train_test_split(X, y, random_state=0)
-    ```
+        X_train, X_test, y_train, y_test =
+        train_test_split(X, y, random_state=0)
+        ```
+
+    2. Cross Validation:
+       * Cross-validation is a method that goes beyond evaluating a single model using a single Train/Test split of the data by using multiple Train/Test splits, each of which is used to train and evaluate a separate model.
+       * So why is this better than our original method of a single Train/Test split? Bec. the accuracy score you get from running a classifier can vary quite a bit just by chance depending on the specific samples that happen to end up in the training set.
+       * Cross-validation basically gives more stable and reliable estimates of how the classifiers likely to perform on average by running multiple different training test splits and then averaging the results.
+       * The most common type of cross-validation is k-fold cross-validation most commonly with K set to 5 or 10. For example, to do five-fold cross-validation, the original dataset is partitioned into five parts of equal or close to equal size. Each of these parts is called a "fold". Then a series of five models is trained one per fold. The first model: Model one, is trained using folds 2 through 5 as the training set and evaluated using fold 1 as the test set. The second model: Model 2, is trained using Folds 1, 3, 4, and 5 as the training set, and evaluated using Fold 2 as the test set, and so on. When this process is done, we have five accuracy values, one per fold.
+       * One benefit of computing the accuracy of a model on multiple splits instead of a single split, is that it gives us potentially useful information about how sensitive the model is to the nature of the specific training set. It does take more time and computation to do cross-validation.
+       * One problem with this is that the records are sorted or at least show some bias in the ordering by class label. For example, the first 20% of the data has the same label. `scikit-learn` do cross-validation for a classification task, it actually does instead what's called "Stratified K-fold Cross-validation". The Stratified Cross-validation means that when splitting the data, the proportions of classes in each fold are made as close as possible to the actual proportions of the classes in the overall data set as shown here. While for regression, `scikit-learn` uses regular k-fold cross-validation. 
+
+            ```python
+            from sklearn.model_selection import cross_val_score
+
+            clf = KNeighborsClassifier(n_neighbors = 5)
+            X = X_fruits_2d.as_matrix()
+            y = y_fruits_2d.as_matrix()
+            cv_scores = cross_val_score(clf, X, y, cv = 3)
+            # clf: the model you want to evaluate
+            # X, y: dataset
+            # cv: the corresponding ground truth target labels or values. By default, cross_val_score does threefold cross-validation.
+            print('Cross-validation scores (3-fold):', cv_scores)
+            print('Mean cross-validation score (3-fold): {:.3f}'.format(np.mean(cv_scores)))
+            ```
 
 ## Supervised Machine Learning Algorithms
 
@@ -288,7 +310,7 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                     #! In Scikit-Learn object attribute ends with an underscore, this means that this attribute is derived from the training data, not quantities that set by the user.
                     ```
 
-            2. Ridge Regression:  
+            1. Ridge Regression:  
                ![ridge_equation](/images/Ridge&#32;Equation.jpg)
                * Ridge regression uses the same least-squares criterion, but with one difference. During the training phase, it adds a penalty for large feature weights in w parameters.
                * Once the parameters are learned, its prediction formula is the same as ordinary least-squares.
@@ -310,7 +332,7 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                     linridge = Ridge(alpha = 20.0).fit(X_train_scaled, y_train)
                     ```
 
-            3. Lasso Regression
+            2. Lasso Regression
                 ![Lasso_equation](/images/Lasso&#32;Equation.jpg)
                 * Like ridge regression, lasso regression adds a regularization penalty term to the ordinary least-squares objective, that causes the model W-coefficients to shrink towards zero.
                 * Lasso regression is another form of regularized linear regression that uses an L1 regularization penalty for training (instead of ridge's L2 penalty).

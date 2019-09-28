@@ -271,7 +271,7 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                * The most popular way to estimate w and b parameters is using what's called least-squares linear regression or ordinary least-squares. Least-squares finds the values of w and b that minimize the total sum of squared differences between the predicted y value and the actual y value in the training set. Or equivalently it minimizes the mean squared error of the model.
                * This technique is designed to find the slope, the w value, and the b value of the y intercept, that minimize this squared error, this mean squared error.
                * The mean squared error is the square difference between predicted and actual values, and then all these are added up, and then divided by the number of training points, take the average, that will be the mean squared error of the model.
-               * One thing to note about this linear regression model is that there are no parameters to control the model complexity. No matter what the value of w and b, the result is always going to be a straight line. This is both a strength and a weakness of the model. 
+               * One thing to note about this linear regression model is that there are no parameters to control the model complexity. No matter what the value of w and b, the result is always going to be a straight line. This is both a strength and a weakness of the model.
 
                     ```python
                     from sklearn.linear_model import LinearRegression
@@ -336,7 +336,24 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                   * Many small/medium sized effects: use ridge.
                   * Only a few variables with medium/large effect: use lasso.
 
-    2. Logistic Regression  
+    2. Linear Classification
+        1. Support Vector Machines (SVC):
+            * Linear models are also used for classification, starting with binary classification.
+            * This approach uses the same linear functional form as for regression. But instead of predicting a continuous target value, we take the output of the linear function and apply the sine function to produce a binary output with two possible values, corresponding to the two possible class labels.
+            * One way to define a good classifier is to reward classifiers for the amount of separation that can provide between the two classes (classifier margin). The margin is the width that the decision boundary can be increased perpendicularly before hitting a data point. The classifier that has the maximum margin is called the Linear Support Vector Machine, also known as an LSVM or a support vector machine with linear kernel.
+            * How tolerant the support vector machine is of misclassifying training points, as compared to its objective of minimizing the margin between classes is controlled by a regularization parameter called C which by default is set to 1.0. Larger values of C represent less regularization and will cause the model to fit the training set with these few errors as possible, even if it means using a small immersion decision boundary. Very small values of C on the other hand use more regularization that encourages the classifier to find a large marge on decision boundary, even if that decision boundary leads to more points being misclassified.
+
+        * **Linear Model Pros**:
+          * Simple and easy to train.
+          * Fast prediction.
+          * Scales well to very large dataset.
+          * Works well with sparse data.
+          * Reasons for prediction are relatively easy to interpret.
+        * **Linear Model Cons**:
+          * For lower-dimensional data, other models may have superior generalization performance.
+          * For classification, data may not be linearly separable.
+
+    3. Logistic Regression  
         ![Flowchart box](images/Logistic&#32;Regression&#32;flow&#32;chart.jpg)  
         ![Logistic fn](images/Logistic&#32;Regression&#32;function.jpg)
        * It is a kind of generalized linear model.
@@ -359,6 +376,44 @@ This is in contrast to unsupervised machine learning where we don't have labels 
          * Parameter C controls amount of regularization (default 1.0)
          * As with regularized linear regression, it can be important to normalize all features so that they are on the same scale.
 
+    4. Kernelized Support Vector Machines (SVMs)
+       * It is a very powerful extension of linear support vector machines, it can provide more complex models that can go beyond linear decision boundaries.
+       * SVMs can be used for both classification and regression.
+       * one way to think about what kernelized SVMs do, is they take the original input data space and transform it to a new higher dimensional feature space, where it becomes much easier to classify the transform to data using a linear classifier. (eg. instead of y(x) it became y(x,x^2) like polynomial feature).  
+       ![example](images/SVM&#32;1-dim&#32;to&#32;2-dim.jpg)  
+       The above figure shows at the right that the points can be separated by a straight line after converting it to a two dimensional space, while on the left is the original one dimensional points in which the straight line is converted to a parabola.
+       * An example of how it can be done using scikit-learn in Python.
+
+            ```python
+            from sklearn.svm import SVC
+            from adspy_shared_utilities import              plot_class_regions_for_classifier
+
+            X_train, X_test, y_train, y_test = train_test_split(X_D2, y_D2, random_state = 0)
+
+            # The default SVC kernel is radial basis function (RBF)
+            #! SVC() = SVC(kernel = 'rbf', gamma=1, C=1)
+
+            plot_class_regions_for_classifier(SVC().fit(X_train, y_train), X_train, y_train, None, None, 'Support Vector Classifier: RBF kernel')
+
+            # Compare decision boundaries with polynomial kernel, degree = 3
+            plot_class_regions_for_classifier(SVC(kernel = 'poly', degree = 3).fit(X_train, y_train), X_train, y_train, None, None, 'Support Vector Classifier: Polynomial kernel, degree = 3')
+            ```
+
+            * Calling the fit method with the training data to train the model.
+            * There is an SVC parameter called kernel, that allows us to set the kernel function used by the SVM. The polynomial kernel takes additional parameter degree that controls the model complexity and the computational cost of this transformation.
+            * Small gamma means a larger similarity radius (give broader, smoother decision regions). So that points farther apart are considered similar . Which results in more points being group together. Small values of gamma. While larger values of gamma give smaller, more complex decision regions, tightly constrained decision boundaries.
+            * SVMs also have a regularization parameter, C, that controls the tradeoff between satisfying the maximum margin criterion to find the simple decision boundary, and avoiding misclassification errors on the training set. The C parameter is also an important one for kernelized SVMs, and it interacts with the gamma parameter.
+
+       * Pros:
+          * Can perform well on a range of datasets.
+          * Versatile: different kernel functions can be specified, or custom kernels can be defined for specific data types.
+          * Works well for both low-and high-dimensional data.
+       * Cons:
+         * Efficiency (runtime speed and memory usage) decreases as training set size increases (e.g. over 50000 samples).
+         * Needs careful normalization of input data and parameter tuning.
+         * Does not provide direct probability estimates (but can be estimated using e.g. Platt scaling).
+         * Difficult to interpret why a prediction was made.
+
 ## Aspects to be considered
 
 1. ### Overfitting
@@ -371,3 +426,9 @@ This is in contrast to unsupervised machine learning where we don't have labels 
 
 * To avoid these, the below points would help:
   1. First, try to draw the data with respect to the labels and try to figure out the relationship between, whether its linear, quadratic, polynomial and so on.
+  2. Reduce the number of features.
+     1. Manually select which features to keep.
+     2. Use a model selection algorithm.
+  3. Regularization
+     1. Keep all the features, but reduce the magnitude of parameters.
+     * It works well when there are a lot of slightly useful features.

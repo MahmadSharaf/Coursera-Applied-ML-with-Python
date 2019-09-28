@@ -24,9 +24,10 @@ from sklearn.neighbors import KNeighborsClassifier
 
 np.set_printoptions(precision=2)
 
+#todo Import data
+fruits = pd.read_table('week 2/readonly/fruit_data_with_colors.txt')
 
-fruits = pd.read_table('readonly/fruit_data_with_colors.txt')
-
+#todo Split data into features and labels
 feature_names_fruits = ['height', 'width', 'mass', 'color_score']
 X_fruits = fruits[feature_names_fruits]
 y_fruits = fruits['fruit_label']
@@ -35,21 +36,30 @@ target_names_fruits = ['apple', 'mandarin', 'orange', 'lemon']
 X_fruits_2d = fruits[['height', 'width']]
 y_fruits_2d = fruits['fruit_label']
 
+#todo Split a percentage of the data to be training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X_fruits, y_fruits, random_state=0)
 
+#todo Apply preprocessing(eg. Normalization)
 from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-# we must apply the scaling to the test set that we computed for the training set
+#* Create a module object
+scaler = MinMaxScaler()  
+#* Compute the max and min using 'fit' and scale 'transform' training data
+X_train_scaled = scaler.fit_transform(X_train) 
+#! we must apply the scaling to the test set that we computed for the training set
+#* Scale testing data
 X_test_scaled = scaler.transform(X_test)
 
+#todo Choose a learning model (eg. K Neighbors)
+#* Create a module object
 knn = KNeighborsClassifier(n_neighbors = 5)
+#* Train training data
 knn.fit(X_train_scaled, y_train)
+#* Test accuracy of the trained model
 print('Accuracy of K-NN classifier on training set: {:.2f}'
      .format(knn.score(X_train_scaled, y_train)))
 print('Accuracy of K-NN classifier on test set: {:.2f}'
      .format(knn.score(X_test_scaled, y_test)))
-
+#* Experiment the model with an example
 example_fruit = [[5.5, 2.2, 10, 0.70]]
 example_fruit_scaled = scaler.transform(example_fruit)
 print('Predicted fruit type for ', example_fruit, ' is ', 
@@ -65,7 +75,11 @@ from matplotlib.colors import ListedColormap
 from sklearn.datasets import load_breast_cancer
 from adspy_shared_utilities import load_crime_dataset
 
-cmap_bold = ListedColormap(['#FFFF00', '#00FF00', '#0000FF','#000000'])
+#todo show plots in Jupyter interactive window
+%matplotlib inline
+
+#todo List specific colors to be used for the dataset points in the plots
+cmap_bold = ListedColormap(['#FFFF00', '#00FF00', '#0000FF','#FFFFFF'])
 
 
 # synthetic dataset for simple regression

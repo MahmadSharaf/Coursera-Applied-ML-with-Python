@@ -216,8 +216,8 @@ This is in contrast to unsupervised machine learning where we don't have labels 
     * It is a type of machine learning algorithm.
     * It can be used for classification and regression.
     * It is an example of what's called instance based or memory based supervised learning.
-    * It returns a classifier that classifies the input with respect to the nearest n_neighbors neighbors that is the most predominant.
-     K-nearest neighbors doesn't make a lot of assumptions about the structure of the data and gives potentially accurate, but sometimes unstable predictions
+    * It returns a classifier that classifies the input with respect to the nearest n_neighbors neighbors that is the most predominant.  
+    K-nearest neighbors doesn't make a lot of assumptions about the structure of the data and gives potentially accurate, but sometimes unstable predictions
     * It can be sensitive to small changes in the training data.
     * It can be used in python as below:
         1. Initiate a variable as
@@ -251,28 +251,41 @@ This is in contrast to unsupervised machine learning where we don't have labels 
     * It can get stable, but potentially inaccurate predictions.
 
     1. Linear Regression  
-        ![equation](https://github.com/MahmadSharaf/Coursera-Applied-ML-with-Python/blob/master/images/Linear%20equation.jpg)  
+        ![equation](images/Linear&#32;equation.jpg)  
         <!-- $$
         \hat{y} = \hat{w_0}x_0 + \hat{w_1} x_1 + ... \hat{w_n} x_n + \hat{b}
         $$ -->
-        y: the predicted output.  
-        w_i: values are model coefficients or weights.  
-        b: the biased term or intercept of the model.
+        The hat(^) is an indication that the parameter is estimated during training process.  
+        **y**: the predicted output.  
+        **w_i**: the model coefficients or feature weights.  
+        **b**: the biased term or intercept of the model.
 
         w, b parameters are estimated by:
 
+        * They are estimated from training the data.
+        * There are different methods correspond to different 'fit' criteria and goals and ways to control complexity.
         * `Squared loss function` returns the squared difference between the target value and the  actual value as the penalty.
-        * The learning algorithm then computes or searches for the set of w, b parameters that minimize the total of this loss function over all training points.
+        * The learning algorithm then computes or searches for the set of w, b parameters that optimize an objective function, typically to minimize the total of this loss function over all training points.
             1. Least Squares:
             ![Least-squares_equation](images/Least-squares&#32;Equation.jpg)
                * The most popular way to estimate w and b parameters is using what's called least-squares linear regression or ordinary least-squares. Least-squares finds the values of w and b that minimize the total sum of squared differences between the predicted y value and the actual y value in the training set. Or equivalently it minimizes the mean squared error of the model.
+               * This technique is designed to find the slope, the w value, and the b value of the y intercept, that minimize this squared error, this mean squared error.
+               * The mean squared error is the square difference between predicted and actual values, and then all these are added up, and then divided by the number of training points, take the average, that will be the mean squared error of the model.
+               * One thing to note about this linear regression model is that there are no parameters to control the model complexity. No matter what the value of w and b, the result is always going to be a straight line. This is both a strength and a weakness of the model. 
 
                     ```python
                     from sklearn.linear_model import LinearRegression
 
                     X_train, X_test, y_train, y_test= train_test_split(X_R1, y_R1, random_state= 0)
 
-                    linreg= LinearRegression().fit(X_train, y_train)
+                    linreg = LinearRegression().fit(X_train, y_train)
+
+                    # w_i: coefficients
+                    linreg.coef_
+                    # b: the intercept term
+                    linreg.intercept_
+
+                    #! In Scikit-Learn object attribute ends with an underscore, this means that this attribute is derived from the training data, not quantities that set by the user.
                     ```
 
             2. Ridge Regression:  
@@ -280,8 +293,9 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                * Ridge regression uses the same least-squares criterion, but with one difference. During the training phase, it adds a penalty for large feature weights in w parameters.
                * Once the parameters are learned, its prediction formula is the same as ordinary least-squares.
                * The addition of a parameter penalty is called regularization. Regularization prevents over fitting by restricting the model, typically to reduce its complexity.
+               * It uses L2 regularization: minimize sum of squares of w entries.
                * If ridge regression finds two possible linear models that predict the training data values equally well, it will prefer the linear model that has a smaller overall sum of squared feature weights.
-               * The amount of regularization to apply is controlled by the alpha parameter. Larger alpha means more regularization and simpler linear models with weights closer to zero.
+               * The amount of regularization to apply is controlled by the alpha parameter. Larger alpha means more regularization and simpler linear models with weights closer to zero.(default 1.0)
 
                     ```python
                     from sklearn.preprocessing import MinMaxScaler
@@ -321,6 +335,29 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                 * When to use ridge vs lasso:
                   * Many small/medium sized effects: use ridge.
                   * Only a few variables with medium/large effect: use lasso.
+
+    2. Logistic Regression  
+        ![Flowchart box](images/Logistic&#32;Regression&#32;flow&#32;chart.jpg)  
+        ![Logistic fn](images/Logistic&#32;Regression&#32;function.jpg)
+       * It is a kind of generalized linear model.
+       * In spite of being called a regression measure, it is actually used for classification
+       * like ordinary least squares and other regression methods, logistic regression takes a set input variables, the features, and estimates a target value.
+       * Unlike ordinary linear regression, in it's most basic form logistic repressions target value is a binary variable instead of a continuous value.
+       * There are flavors of logistic regression that can also be used in cases where the target value to be predicted is a multi class categorical variable, not just binary.
+       * Logistic regression is similar to linear regression, but with one critical addition. The logistic regression model still computes a weighted sum of the input features xi and the intercept term b (like in linear regression), but it runs this result through a special non-linear function f, the logistic function represented by this new box in the middle of the diagram to produce the output y. The effect of applying the logistic function is to compress the output of the linear function so that it's limited to a range between 0 and 1. Below the diagram, you can see the formula for the predicted output y hat which first computes the same linear combination of the inputs xi, model coefficient weights wi hat and intercept b hat, but runs it through the additional step of applying the logistic function to produce y hat.
+       * If we pick different values for b hat and the w hat coefficients, we'll get different variants of this s shaped logistic function, which again is always between 0 and 1.
+       * To perform logistic, regression in Scikit-Learn, you import the logistic regression class from the sklearn.linear model module, then create the object and call the fit method using the training data just as you did for other class files like k nearest neighbors.
+
+            ```python
+            from sklearn.linear_model import LogisticRegression
+
+            X_train, X_test, y_train, y_test = train_test_split(X_C2,   y_C2,random_state = 0)
+            clf = LogisticRegression(C=1).fit(X_train, y_train)
+            ```
+
+         * L2 regularization is 'on' by default (like ridge regression)
+         * Parameter C controls amount of regularization (default 1.0)
+         * As with regularized linear regression, it can be important to normalize all features so that they are on the same scale.
 
 ## Aspects to be considered
 

@@ -212,7 +212,7 @@ examples of a task
        * Cross-validation basically gives more stable and reliable estimates of how the classifiers likely to perform on average by running multiple different training test splits and then averaging the results.
        * The most common type of cross-validation is k-fold cross-validation most commonly with K set to 5 or 10. For example, to do five-fold cross-validation, the original dataset is partitioned into five parts of equal or close to equal size. Each of these parts is called a "fold". Then a series of five models is trained one per fold. The first model: Model one, is trained using folds 2 through 5 as the training set and evaluated using fold 1 as the test set. The second model: Model 2, is trained using Folds 1, 3, 4, and 5 as the training set, and evaluated using Fold 2 as the test set, and so on. When this process is done, we have five accuracy values, one per fold.
        * One benefit of computing the accuracy of a model on multiple splits instead of a single split, is that it gives us potentially useful information about how sensitive the model is to the nature of the specific training set. It does take more time and computation to do cross-validation.
-       * One problem with this is that the records are sorted or at least show some bias in the ordering by class label. For example, the first 20% of the data has the same label. `scikit-learn` do cross-validation for a classification task, it actually does instead what's called "Stratified K-fold Cross-validation". The Stratified Cross-validation means that when splitting the data, the proportions of classes in each fold are made as close as possible to the actual proportions of the classes in the overall data set as shown here. While for regression, `scikit-learn` uses regular k-fold cross-validation. 
+       * One problem with this is that the records are sorted or at least show some bias in the ordering by class label. For example, the first 20% of the data has the same label. `scikit-learn` do cross-validation for a classification task, it actually does instead what's called "Stratified K-fold Cross-validation". The Stratified Cross-validation means that when splitting the data, the proportions of classes in each fold are made as close as possible to the actual proportions of the classes in the overall data set as shown here. While for regression, `scikit-learn` uses regular k-fold cross-validation.
 
             ```python
             from sklearn.model_selection import cross_val_score
@@ -288,71 +288,72 @@ This is in contrast to unsupervised machine learning where we don't have labels 
         * There are different methods correspond to different 'fit' criteria and goals and ways to control complexity.
         * `Squared loss function` returns the squared difference between the target value and the  actual value as the penalty.
         * The learning algorithm then computes or searches for the set of w, b parameters that optimize an objective function, typically to minimize the total of this loss function over all training points.
-            1. Least Squares:
+
+        1. Least Squares:
             ![Least-squares_equation](images/Least-squares&#32;Equation.jpg)
-               * The most popular way to estimate w and b parameters is using what's called least-squares linear regression or ordinary least-squares. Least-squares finds the values of w and b that minimize the total sum of squared differences between the predicted y value and the actual y value in the training set. Or equivalently it minimizes the mean squared error of the model.
-               * This technique is designed to find the slope, the w value, and the b value of the y intercept, that minimize this squared error, this mean squared error.
-               * The mean squared error is the square difference between predicted and actual values, and then all these are added up, and then divided by the number of training points, take the average, that will be the mean squared error of the model.
-               * One thing to note about this linear regression model is that there are no parameters to control the model complexity. No matter what the value of w and b, the result is always going to be a straight line. This is both a strength and a weakness of the model.
+            * The most popular way to estimate w and b parameters is using what's called least-squares linear regression or ordinary least-squares. Least-squares finds the values of w and b that minimize the total sum of squared differences between the predicted y value and the actual y value in the training set. Or equivalently it minimizes the mean squared error of the model.
+            * This technique is designed to find the slope, the w value, and the b value of the y intercept, that minimize this squared error, this mean squared error.
+            * The mean squared error is the square difference between predicted and actual values, and then all these are added up, and then divided by the number of training points, take the average, that will be the mean squared error of the model.
+            * One thing to note about this linear regression model is that there are no parameters to control the model complexity. No matter what the value of w and b, the result is always going to be a straight line. This is both a strength and a weakness of the model.
 
-                    ```python
-                    from sklearn.linear_model import LinearRegression
+                ```python
+                from sklearn.linear_model importLinearRegression
 
-                    X_train, X_test, y_train, y_test= train_test_split(X_R1, y_R1, random_state= 0)
+                X_train, X_test, y_train, y_test=train_test_split(X_R1, y_R1, random_state=0)
 
-                    linreg = LinearRegression().fit(X_train, y_train)
+                linreg = LinearRegression().fit(X_train,y_train)
 
-                    # w_i: coefficients
-                    linreg.coef_
-                    # b: the intercept term
-                    linreg.intercept_
+                # w_i: coefficients
+                linreg.coef_
+                # b: the intercept term
+                linreg.intercept_
 
-                    #! In Scikit-Learn object attribute ends with an underscore, this means that this attribute is derived from the training data, not quantities that set by the user.
-                    ```
+                #! In Scikit-Learn object attribute endswith an underscore, this means that thisattribute is derived from the trainingdata, not quantities that set by the user.
+                ```
 
-            1. Ridge Regression:  
-               ![ridge_equation](/images/Ridge&#32;Equation.jpg)
-               * Ridge regression uses the same least-squares criterion, but with one difference. During the training phase, it adds a penalty for large feature weights in w parameters.
-               * Once the parameters are learned, its prediction formula is the same as ordinary least-squares.
-               * The addition of a parameter penalty is called regularization. Regularization prevents over fitting by restricting the model, typically to reduce its complexity.
-               * It uses L2 regularization: minimize sum of squares of w entries.
-               * If ridge regression finds two possible linear models that predict the training data values equally well, it will prefer the linear model that has a smaller overall sum of squared feature weights.
-               * The amount of regularization to apply is controlled by the alpha parameter. Larger alpha means more regularization and simpler linear models with weights closer to zero.(default 1.0)
+        2. Ridge Regression:  
+            ![ridge_equation](/images/Ridge&#32;Equation.jpg)
+            * Ridge regression uses the same least-squares criterion, but with one difference. During the training phase, it adds a penalty for large feature weights in w parameters.
+            * Once the parameters are learned, its prediction formula is the same as ordinary least-squares.
+            * The addition of a parameter penalty is called regularization. Regularization prevents over fitting by restricting the model, typically to reduce its complexity.
+            * It uses L2 regularization: minimize sum of squares of w entries.
+            * If ridge regression finds two possible linear models that predict the training data values equally well, it will prefer the linear model that has a smaller overall sum of squared feature weights.
+            * The amount of regularization to apply is controlled by the alpha parameter. Larger alpha means more regularization and simpler linear models with weights closer to zero.(default 1.0)
 
-                    ```python
-                    from sklearn.preprocessing import MinMaxScaler
-                    scaler = MinMaxScaler()
+                ```python
+                from sklearn.preprocessing importMinMaxScaler
+                scaler = MinMaxScaler()
 
-                    from sklearn.linear_model import Ridge
-                    X_train, X_test, y_train, y_test = train_test_split(X_crime, y_crime, random_state=0)
+                from sklearn.linear_model import Ridge
+                X_train, X_test, y_train, y_test =train_test_split(X_crime, y_crime,random_state=0)
 
-                    X_train_scaled = scaler.fit_transform(X_train)
-                    X_test_scaled = scaler.transform(X_test)
+                X_train_scaled = scaler.fit_transfor(X_train)
+                X_test_scaled = scaler.transform(X_test)
 
-                    linridge = Ridge(alpha = 20.0).fit(X_train_scaled, y_train)
-                    ```
+                linridge = Ridge(alpha = 20.0).fi(X_train_scaled, y_train)
+                ```
 
-            2. Lasso Regression
-                ![Lasso_equation](/images/Lasso&#32;Equation.jpg)
-                * Like ridge regression, lasso regression adds a regularization penalty term to the ordinary least-squares objective, that causes the model W-coefficients to shrink towards zero.
-                * Lasso regression is another form of regularized linear regression that uses an L1 regularization penalty for training (instead of ridge's L2 penalty).
-                * L1 Penalty: minimizes the sum of the absolute values of the coefficients.
-                * This has the effect of setting parameter weights in w to zero for the least influential variables. This called a sparse solution: a kind of feature selection.
-                * The parameter alpha controls the amount of L1 regularization (default = 1.0).
-                * The prediction formula is the same as ordinary least-squares.
+        3. Lasso Regression
+            ![Lasso_equation](/images/Lasso&#32;Equation.jpg)
+            * Like ridge regression, lasso regression adds a regularization penalty term to the ordinary least-squares objective, that causes the model W-coefficients to shrink towards zero.
+            * Lasso regression is another form of regularized linear regression that uses an L1 regularization penalty for training (instead of ridge's L2 penalty).
+            * L1 Penalty: minimizes the sum of the absolute values of the coefficients.
+            * This has the effect of setting parameter weights in w to zero for the least influential variables. This called a sparse solution: a kind of feature selection.
+            * The parameter alpha controls the amount of L1 regularization (default = 1.0).
+            * The prediction formula is the same as ordinary least-squares.
 
-                    ```python
-                    from sklearn.preprocessing import MinMaxScaler
-                    scaler = MinMaxScaler()
+                ```python
+                from sklearn.preprocessing importMinMaxScaler
+                scaler = MinMaxScaler()
 
-                    from sklearn.linear_model import Ridge
-                    X_train, X_test, y_train, y_test =  train_test_split(X_crime, y_crime, random_state=0)
+                from sklearn.linear_model import Ridge
+                X_train, X_test, y_train, y_test = train_test_split(X_crime, y_crime,random_state=0)
 
-                    X_train_scaled = scaler.fit_transform(X_train)
-                    X_test_scaled = scaler.transform(X_test)
+                X_train_scaled = scaler.fit_transfor(X_train)
+                X_test_scaled = scaler.transform(X_test)
 
-                    linlasso = Lasso(alpha = 2.0, max_iter = 10000) .fit(X-train_scaled, y_train)
-                    ```
+                linlasso = Lasso(alpha = 2.0, max_iter =10000) .fit(X-train_scaled, y_train)
+                ```
 
                 * When to use ridge vs lasso:
                   * Many small/medium sized effects: use ridge.
@@ -435,6 +436,47 @@ This is in contrast to unsupervised machine learning where we don't have labels 
          * Needs careful normalization of input data and parameter tuning.
          * Does not provide direct probability estimates (but can be estimated using e.g. Platt scaling).
          * Difficult to interpret why a prediction was made.
+
+    5. Decision tree
+
+        ![Decision Tree Example](images/Descision&#32;Tree&#32;Example.jpg)
+        * It can be used for both regression and classification.
+        * It learns a series of explicit `if then` rules on feature values that result in a decision that predicts the target value. In this way any given object can be categorized as either matching the target object the first person is thinking of or not, according to its features as determined by asking the series of yes or no questions. We can form these questions into a tree with a node representing one question and the yes or no possible answers as the left and right branches from that node that connect the node to the next level of the tree. One question being answered at each level. At the bottom of the tree are nodes called leaf nodes that represent actual objects as the possible answers. For any object there's a path from the root of the tree to that object that is determined by the answers to the specific yes or no questions at each level.
+
+            ```python
+            from sklearn.datasets import load_iris
+            from sklearn.tree import DecisionTreeClassifier
+            from sklearn.model_selection import train_test_split
+
+            iris = load_iris()
+
+            X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, random_state = 3)
+            clf = DecisionTreeClassifier(max_depth = 3, min_samples_leaf = 8).fit(X_train, y_train)
+            ```
+
+            * `max_depth`: controls maximum depth (number of split points). Most common way to reduce tree complexity and overfitting.
+            * `min_samples_leaf`: threshold for the minimum # of data instances a leaf can have to avoid further splitting.
+            * `max_leaf_nodes`: limits total number of leaves in the tree.
+            * In practice, adjusting only one of these (e.g. max_depth) is enough to reduce overfitting.
+        * **Over Fitting**
+          * There is a problem with decision tree which is overfitting, due to its complexity and essentially memorizing the training data.
+          * One strategy to prevent overfitting is to prevent the tree from becoming really detailed and complex by stopping its growth early. This is called pre-pruning.
+          * Another strategy is to build a complete tree with pure leaves but then to prune back the tree into a simpler form. This is called post-pruning or sometimes just pruning.
+        * **Feature Importance**
+          * Another way of analyzing the tree instead of looking at the whole tree at once is to do what's called a feature important calculation.
+          * one of the most useful and widely used types of summary analysis you can perform on a supervised learning model.
+          * typically a number between 0 and 1 that's assigned to an individual feature.
+          * It indicates how important that feature is to the overall prediction accuracy.
+          * A feature importance of zero means that the feature is not used at all in the prediction. A feature importance of one, means the feature perfectly predicts the target.
+          * Typically, feature importance numbers are always positive and they're normalized so they sum to one.
+          * In `scikit-learn`, feature importance values are stored as a list in an estimated property called `feature_importances_`.
+        * **Pros**:  
+          * Easily visualized and interpreted.
+          * No feature normalization or scaling typically needed.
+          * Work well with datasets using a mixture of feature types (continuous, categorical, binary)
+        * **Cons**:
+          * Even after tuning, decision trees can often still overfit.
+          * Usually need an ensemble of trees for better generalization performance.
 
 ## Aspects to be considered
 

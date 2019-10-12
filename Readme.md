@@ -181,14 +181,14 @@ examples of a task
         from sklearn.linear_model import Ridge
         from sklearn.preprocessing import PolynomialFeatures
 
-        X_train, X_test, y_train, y_test =  train_test_split(X_F1    y_F1, random_state = 0)
+        X_train, X_test, y_train, y_test =  train_test_split(x    y, random_state = 0)
 
         linreg = LinearRegression().fit(X_train, y_train)
 
         poly = PolynomialFeatures(degree=2)
-        X_F1_poly = poly.fit_transform(X_F1)
+        X_poly = poly.fit_transform(x)
 
-        X_train, X_test, y_train, y_test =  train_test_split(X_F1_poly,y_F1, random_state = 0)
+        X_train, X_test, y_train, y_test =  train_test_split(X_poly,y, random_state = 0)
 
         linreg = LinearRegression().fit(X_train, y_train)
         ```
@@ -226,6 +226,23 @@ examples of a task
             # cv: the corresponding ground truth target labels or values. By default, cross_val_score does threefold cross-validation.
             print('Cross-validation scores (3-fold):', cv_scores)
             print('Mean cross-validation score (3-fold): {:.3f}'.format(np.mean(cv_scores)))
+            ```
+
+    3. Validation Curve:
+        * To evaluate the effect that an important parameter of a model has on the cross-validation scores.
+        * Like cross-value score, validation curve will do threefold cross-validation by default but it can be adjusted with the CV parameter as well.
+        * Unlike cross_val_score, you can also specify a classifier, parameter name, and set of parameter values, you want to sweep across.
+        * So you first pass in the estimator object, or that is the classifier or regression object to use, followed by the data set samples X and target values Y, the name of the parameter to sweep, and the array of parameter values that that parameter should take on in doing the sweep.
+        * It will return two two-dimensional arrays corresponding to evaluation on the training set and the test set. Each array has one row per parameter value in the sweep, and the number of columns is the number of cross-validation folds that are used.
+
+            ```python
+            from sklearn.svm import SVC
+            from sklearn.model_selection import validation_curve
+
+            param_range = np.logspace(-3, 3, 4)
+            train_scores, test_scores = validation_curve(SVC(), X, y,
+                                            param_name='gamma',
+                                            param_range=param_range, cv=3)
             ```
 
 ## Supervised Machine Learning Algorithms
@@ -327,10 +344,10 @@ This is in contrast to unsupervised machine learning where we don't have labels 
                 from sklearn.linear_model import Ridge
                 X_train, X_test, y_train, y_test =train_test_split(X_crime, y_crime,random_state=0)
 
-                X_train_scaled = scaler.fit_transfor(X_train)
+                X_train_scaled = scaler.fit_transform(X_train)
                 X_test_scaled = scaler.transform(X_test)
 
-                linridge = Ridge(alpha = 20.0).fi(X_train_scaled, y_train)
+                linridge = Ridge(alpha = 20.0).fit(X_train_scaled, y_train)
                 ```
 
         3. Lasso Regression

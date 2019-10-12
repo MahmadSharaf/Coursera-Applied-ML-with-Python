@@ -12,7 +12,8 @@
     * Regression
 5. **Using the data for classes 0, 1, and 2 plotted below, what class would a KNeighborsClassifier classify the new point as for k = 1 and k = 3?**
     * k=1: Class 1 k=3: Class 2
-6. **[`WrongAnswer`] Which of the following is true for the nearest neighbor classifier (Select all that apply):**
+6. **Which of the following is true for the nearest neighbor classifier (Select all that apply):**  
+   [`WrongAnswers`]
     * ~~Partitions observations into k clusters where each observation belongs to the cluster with the nearest mean~~
     * ~~A higher value of k leads to a more complex decision boundary~~
 7. **Why is it important to examine your dataset as a first step in applying machine learning?**
@@ -22,7 +23,7 @@
     * Get a sense of how difficult the program might be
 8. **The key purpose of splitting the dataset into training and test sets is:**
     * To estimate how well the learned model will generalize to new data
-9. T**he purpose of setting the random_state parameter in train_test_split is:**
+9. **The purpose of setting the random_state parameter in train_test_split is:**
     * To make experiments easily reproducible by always using the same partitioning of the data
 10. **Given a dataset with 10,000 observations and 50 features plus one label, what would be the dimensions of X_train, y_train, X_test, and y_test? Assume a train/test split of 75%/25%.**
     * X_train: (7500, 50)  
